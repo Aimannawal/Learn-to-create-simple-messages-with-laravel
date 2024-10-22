@@ -1,66 +1,327 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Laravel CRUD Setup
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This guide will help you install Laravel, set up a database, and create a basic CRUD (Create, Read, Update, Delete) functionality using Laravel.
 
-## About Laravel
+## Prerequisites
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- PHP >= 8.0
+- Composer (PHP dependency manager)
+- MySQL (or other supported database)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Step 1: Install Laravel
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+First, you need to install Laravel globally via Composer. Run this command in your terminal:
 
-## Learning Laravel
+```bash
+composer global require laravel/installer
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Once Laravel is installed, create a new Laravel project:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+```bash
+laravel new your_project_name
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Alternatively, if you want to install Laravel in the current directory:
 
-## Laravel Sponsors
+```bash
+composer create-project --prefer-dist laravel/laravel your_project_name
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Move into the project directory:
 
-### Premium Partners
+```bash
+cd your_project_name
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+## Step 2: Set Up the `.env` File
 
-## Contributing
+1. Open the `.env` file in your project directory.
+2. Update the database configuration to match your MySQL credentials:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=your_database_name
+DB_USERNAME=your_database_username
+DB_PASSWORD=your_database_password
+```
 
-## Code of Conduct
+3. Create a new MySQL database with the same name as defined in the `.env` file.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Step 3: Generate Application Key
 
-## Security Vulnerabilities
+Run this command to generate the Laravel application key:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+php artisan key:generate
+```
 
-## License
+## Step 4: Create the Migration
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+To create a migration for the `messages` table, run the following command:
+
+```bash
+php artisan make:migration create_messages_table
+```
+
+This will create a new migration file in the `database/migrations` folder. Open the migration file and modify it as follows:
+
+```php
+public function up()
+{
+    Schema::create('messages', function (Blueprint $table) {
+        $table->id();
+        $table->string('judul');
+        $table->text('isi');
+        $table->timestamps();
+    });
+}
+```
+
+Run the migration to create the table in the database:
+
+```bash
+php artisan migrate
+```
+
+## Step 5: Create the Model
+
+To create a model for the `messages` table, run the following command:
+
+```bash
+php artisan make:model MessageModel
+```
+
+This will create a new model in the `app/Models` directory. Open the `MessageModel.php` file and modify it as follows:
+
+```php
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class MessageModel extends Model
+{
+    use HasFactory;
+
+    protected $table = 'messages';
+    protected $fillable = [
+        'judul',
+        'isi'
+    ];
+}
+```
+
+## Step 6: Create the Controller
+
+To create a controller for managing messages, run the following command:
+
+```bash
+php artisan make:controller MessageController
+```
+
+Open the `MessageController.php` file located in the `app/Http/Controllers` directory and add the following code:
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\MessageModel;
+use Illuminate\Http\Request;
+
+class MessageController extends Controller
+{
+    public function index()
+    {
+        $messages = MessageModel::all();
+        return view('index', ['messages' => $messages]);
+    }
+
+    public function create()
+    {
+        return view('create');
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'judul' => 'required',
+            'isi' => 'required',
+        ]);
+
+        MessageModel::create($request->only(['judul', 'isi']));
+
+        return redirect('/messages');
+    }
+
+    public function edit($id)
+    {
+        $message = MessageModel::findOrFail($id);
+        return view('edit', ['message' => $message]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'judul' => 'required',
+            'isi' => 'required',
+        ]);
+
+        $message = MessageModel::findOrFail($id);
+        $message->update($request->only(['judul', 'isi']));
+
+        return redirect('/messages');
+    }
+
+    public function destroy($id)
+    {
+        $message = MessageModel::findOrFail($id);
+        $message->delete();
+
+        return redirect('/messages');
+    }
+}
+```
+
+## Step 7: Set Up Routes
+
+Open the `routes/web.php` file and add the following routes:
+
+```php
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MessageController;
+
+Route::get('/messages', [MessageController::class, 'index']);
+Route::get('/messages/create', [MessageController::class, 'create']);
+Route::post('/messages', [MessageController::class, 'store']);
+Route::get('/messages/{id}/edit', [MessageController::class, 'edit']);
+Route::put('/messages/{id}', [MessageController::class, 'update']);
+Route::delete('/messages/{id}', [MessageController::class, 'destroy']);
+```
+
+## Step 8: Create Views
+
+### 1. `index.blade.php`
+
+Create a new file named `index.blade.php` in the `resources/views` directory:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Laravel Pesan CRUD</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Daftar Pesan</h1>
+
+        <a href="/messages/create">Tambah Pesan Baru</a>
+
+        @if (session('success'))
+            <div>
+                {{ session('success') }}
+            </div>
+        @endif
+
+        <ul>
+            @foreach ($messages as $message)
+                <li>
+                    <a href="/messages/{{ $message->id }}">{{ $message->judul }}</a>
+                    <a href="/messages/{{ $message->id }}/edit">Edit</a>
+                    <form action="/messages/{{ $message->id }}" method="POST" style="display:inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit">Hapus</button>
+                    </form>
+                </li>
+            @endforeach
+        </ul>
+    </div>
+</body>
+</html>
+```
+
+### 2. `create.blade.php`
+
+Create a new file named `create.blade.php`:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tambah Pesan</title>
+</head>
+<body>
+    <h1>Tambah Pesan Baru</h1>
+    <form action="/messages" method="POST">
+        @csrf
+        <div>
+            <label for="judul">Judul:</label>
+            <input type="text" id="judul" name="judul" required>
+        </div>
+        <div>
+            <label for="isi">Isi:</label>
+            <textarea id="isi" name="isi" required></textarea>
+        </div>
+        <div>
+            <button type="submit">Simpan Pesan</button>
+        </div>
+    </form>
+
+    <a href="/messages">Kembali ke Daftar Pesan</a>
+</body>
+</html>
+```
+
+### 3. `edit.blade.php`
+
+Create a new file named `edit.blade.php`:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Pesan</title>
+</head>
+<body>
+    <h1>Edit Pesan</h1>
+
+    <form action="/messages/{{ $message->id }}" method="POST">
+        @csrf
+        @method('PUT')
+        <div>
+            <label for="judul">Judul:</label>
+            <input type="text" id="judul" name="judul" value="{{ $message->judul }}" required>
+        </div>
+        <div>
+            <label for="isi">Isi:</label>
+            <textarea id="isi" name="isi" required>{{ $message->isi }}</textarea>
+        </div>
+        <div>
+            <button type="submit">Update Pesan</button>
+        </div>
+    </form>
+
+    <a href="/messages">Kembali ke Daftar Pesan</a>
+</body>
+</html>
+```
+
+## Step 9: Run the Laravel Development Server
+
+To run the project, use the following command:
+
+```bash
+php artisan serve
+```
+
+Visit `http://localhost:8000/messages` in your browser to start using the CRUD application.
+
+---
