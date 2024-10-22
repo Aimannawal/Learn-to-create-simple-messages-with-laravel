@@ -1,3 +1,5 @@
+---
+
 # Laravel CRUD Setup
 
 This guide will help you install Laravel, set up a database, and create a basic CRUD (Create, Read, Update, Delete) functionality using Laravel.
@@ -10,19 +12,7 @@ This guide will help you install Laravel, set up a database, and create a basic 
 
 ## Step 1: Install Laravel
 
-First, you need to install Laravel globally via Composer. Run this command in your terminal:
-
-```bash
-composer global require laravel/installer
-```
-
-Once Laravel is installed, create a new Laravel project:
-
-```bash
-laravel new your_project_name
-```
-
-Alternatively, if you want to install Laravel in the current directory:
+First, you need to install Laravel in the current directory:
 
 ```bash
 composer create-project --prefer-dist laravel/laravel your_project_name
